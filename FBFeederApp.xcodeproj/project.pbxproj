@@ -6,9 +6,48 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		FDEFC3072DB8918B00A0D202 /* FBFeeder.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = FDEFC2EE2DB8918B00A0D202 /* FBFeeder.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		FDEFC3052DB8918B00A0D202 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FDEFC2D32DB8914E00A0D202 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FDEFC2ED2DB8918B00A0D202;
+			remoteInfo = FBFeeder;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		FDEFC30C2DB8918B00A0D202 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				FDEFC3072DB8918B00A0D202 /* FBFeeder.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		FDEFC2DB2DB8914E00A0D202 /* FBFeederApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FBFeederApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FDEFC2EE2DB8918B00A0D202 /* FBFeeder.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FBFeeder.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		FDEFC3082DB8918B00A0D202 /* Exceptions for "FBFeeder" folder in "FBFeeder" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = FDEFC2ED2DB8918B00A0D202 /* FBFeeder */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		FDEFC2DD2DB8914E00A0D202 /* FBFeederApp */ = {
@@ -16,10 +55,29 @@
 			path = FBFeederApp;
 			sourceTree = "<group>";
 		};
+		FDEFC2EF2DB8918B00A0D202 /* FBFeeder */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				FDEFC3082DB8918B00A0D202 /* Exceptions for "FBFeeder" folder in "FBFeeder" target */,
+			);
+			explicitFolders = (
+				Resources/_locales,
+				Resources/images,
+			);
+			path = FBFeeder;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		FDEFC2D82DB8914E00A0D202 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FDEFC2EB2DB8918B00A0D202 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -33,6 +91,7 @@
 			isa = PBXGroup;
 			children = (
 				FDEFC2DD2DB8914E00A0D202 /* FBFeederApp */,
+				FDEFC2EF2DB8918B00A0D202 /* FBFeeder */,
 				FDEFC2DC2DB8914E00A0D202 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				FDEFC2DB2DB8914E00A0D202 /* FBFeederApp.app */,
+				FDEFC2EE2DB8918B00A0D202 /* FBFeeder.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -55,10 +115,12 @@
 				FDEFC2D72DB8914E00A0D202 /* Sources */,
 				FDEFC2D82DB8914E00A0D202 /* Frameworks */,
 				FDEFC2D92DB8914E00A0D202 /* Resources */,
+				FDEFC30C2DB8918B00A0D202 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				FDEFC3062DB8918B00A0D202 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				FDEFC2DD2DB8914E00A0D202 /* FBFeederApp */,
@@ -69,6 +131,28 @@
 			productName = FBFeederApp;
 			productReference = FDEFC2DB2DB8914E00A0D202 /* FBFeederApp.app */;
 			productType = "com.apple.product-type.application";
+		};
+		FDEFC2ED2DB8918B00A0D202 /* FBFeeder */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FDEFC3092DB8918B00A0D202 /* Build configuration list for PBXNativeTarget "FBFeeder" */;
+			buildPhases = (
+				FDEFC2EA2DB8918B00A0D202 /* Sources */,
+				FDEFC2EB2DB8918B00A0D202 /* Frameworks */,
+				FDEFC2EC2DB8918B00A0D202 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				FDEFC2EF2DB8918B00A0D202 /* FBFeeder */,
+			);
+			name = FBFeeder;
+			packageProductDependencies = (
+			);
+			productName = FBFeeder;
+			productReference = FDEFC2EE2DB8918B00A0D202 /* FBFeeder.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -81,6 +165,9 @@
 				LastUpgradeCheck = 1630;
 				TargetAttributes = {
 					FDEFC2DA2DB8914E00A0D202 = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					FDEFC2ED2DB8918B00A0D202 = {
 						CreatedOnToolsVersion = 16.3;
 					};
 				};
@@ -99,6 +186,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				FDEFC2ED2DB8918B00A0D202 /* FBFeeder */,
 				FDEFC2DA2DB8914E00A0D202 /* FBFeederApp */,
 			);
 		};
@@ -106,6 +194,13 @@
 
 /* Begin PBXResourcesBuildPhase section */
 		FDEFC2D92DB8914E00A0D202 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FDEFC2EC2DB8918B00A0D202 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +217,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FDEFC2EA2DB8918B00A0D202 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		FDEFC3062DB8918B00A0D202 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FDEFC2ED2DB8918B00A0D202 /* FBFeeder */;
+			targetProxy = FDEFC3052DB8918B00A0D202 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		FDEFC2E52DB8915000A0D202 /* Debug */ = {
@@ -293,6 +403,68 @@
 			};
 			name = Release;
 		};
+		FDEFC30A2DB8918B00A0D202 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = FBFeeder/FBFeeder.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FBFeeder/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = FBFeeder;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.bcyang.FBFeederApp.FBFeeder;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		FDEFC30B2DB8918B00A0D202 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = FBFeeder/FBFeeder.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FBFeeder/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = FBFeeder;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.bcyang.FBFeederApp.FBFeeder;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -310,6 +482,15 @@
 			buildConfigurations = (
 				FDEFC2E82DB8915000A0D202 /* Debug */,
 				FDEFC2E92DB8915000A0D202 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FDEFC3092DB8918B00A0D202 /* Build configuration list for PBXNativeTarget "FBFeeder" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FDEFC30A2DB8918B00A0D202 /* Debug */,
+				FDEFC30B2DB8918B00A0D202 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
