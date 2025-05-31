@@ -16,9 +16,20 @@
             // this also comes from the page being rendered
             const keywords = ["sponsored", "follow", "join"];
 
+            // Deal with those text appended right after title
             if (keywords.some(keyword => postContent.includes(keyword.toLowerCase()))) {
                 // hide the unwanted feed
                 post.style.display = 'none';
+            }
+            
+            // the "Sponsored" is done using <svg><use xlink:href="#SvgTxx> (and the definition is elsewhere in the doc)
+            for (const svg_use of post.querySelectorAll('use')) {
+                // lookup the definition of that <use> node
+                const svg_text = document.querySelector(svg_use.href.baseVal);
+                // 
+                if (svg_text.innerHTML.includes('Sponsor')) {
+                    post.style.display = 'none';
+                }
             }
         });
     }
