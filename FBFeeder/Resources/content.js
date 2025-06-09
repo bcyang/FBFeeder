@@ -11,26 +11,40 @@
 
         // this is where we loop through each feed and identify if it's sponsored content
         posts.forEach(post => {
-            const postContent = post.innerText.toLowerCase();
+        
+            // Verified account appears in a <title> tag
+            const post_title = post.querySelector('title');
+            if (post_title) {
+                const keywords = ['Verified account', 'Shared with Public'];
+                if (keywords.some(keyword => post_title.textContent.includes(keyword))) {
+                    post.style.display = 'none';
+                    return;
+                }
+            }
+            
             // overly simplified - this may false-positively identify those posts
             // this also comes from the page being rendered
-            const keywords = ["sponsored", "follow", "join"];
-
+            /*
+            const postContent = post.innerText.toLowerCase();
+            const keywords = ["sponsored", "follow", "join", "verified account"];
             // Deal with those text appended right after title
             if (keywords.some(keyword => postContent.includes(keyword.toLowerCase()))) {
                 // hide the unwanted feed
                 post.style.display = 'none';
+                return;
             }
-            
+
             // the "Sponsored" is done using <svg><use xlink:href="#SvgTxx> (and the definition is elsewhere in the doc)
             for (const svg_use of post.querySelectorAll('use')) {
                 // lookup the definition of that <use> node
                 const svg_text = document.querySelector(svg_use.href.baseVal);
-                // 
-                if (svg_text.innerHTML.includes('Sponsor')) {
+                // Spon<tspan>onsored</tspan> is the text that appears in the SVG, FB seems to change how the word is broken up by <tspan> randomly
+                if (svg_text.textContent.includes('Sponsor')) {
                     post.style.display = 'none';
+                    return;
                 }
             }
+            */
         });
     }
 
