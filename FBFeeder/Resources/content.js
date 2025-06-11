@@ -15,22 +15,26 @@
             // Verified account appears in a <title> tag
             const post_title = post.querySelector('title');
             if (post_title) {
-                const keywords = ['Verified account', 'Shared with Public'];
+                // 'Shared with Public' -> it seems some friends do share with public... should I care about these?
+                const keywords = ['Verified account'];  // none of my friends have this
                 if (keywords.some(keyword => post_title.textContent.includes(keyword))) {
-                    post.style.display = 'none';
+                    // post.style.display = 'none';
+                    // post.style.background = '#4fa';
+                    post.remove();  // from DOM
                     return;
                 }
             }
             
             // overly simplified - this may false-positively identify those posts
             // this also comes from the page being rendered
-            /*
             const postContent = post.innerText.toLowerCase();
-            const keywords = ["sponsored", "follow", "join", "verified account"];
+            const keywords = ["sponsored", "follow", "join", "verified account",
+                 "people you may know", "reels"];
             // Deal with those text appended right after title
             if (keywords.some(keyword => postContent.includes(keyword.toLowerCase()))) {
                 // hide the unwanted feed
-                post.style.display = 'none';
+                // post.style.display = 'none';
+                post.remove();
                 return;
             }
 
@@ -40,19 +44,21 @@
                 const svg_text = document.querySelector(svg_use.href.baseVal);
                 // Spon<tspan>onsored</tspan> is the text that appears in the SVG, FB seems to change how the word is broken up by <tspan> randomly
                 if (svg_text.textContent.includes('Sponsor')) {
-                    post.style.display = 'none';
+                    // post.style.display = 'none';
+                    post.remove();
                     return;
                 }
             }
-            */
         });
     }
 
-    // filterFeeds();  // potentially do filterFeeds() initially
+    // run filterFeeds() initially
+    // filterFeeds();
     
     // Set up a MutationObserver to monitor changes and re-filter as necessary
     const observer = new MutationObserver(filterFeeds);
     observer.observe(document.body, { childList: true, subtree: true });
 
-    // setInterval(filterFeeds, 5000);  // potentially run filterFeeds() periodically
+    // run filterFeeds() periodically
+    // setInterval(filterFeeds, 2000);
 })();
