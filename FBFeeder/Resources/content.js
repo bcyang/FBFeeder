@@ -18,9 +18,9 @@
                 // 'Shared with Public' -> it seems some friends do share with public... should I care about these?
                 const keywords = ['Verified account'];  // none of my friends have this
                 if (keywords.some(keyword => post_title.textContent.includes(keyword))) {
-                    // post.style.display = 'none';
                     // post.style.background = '#4fa';
-                    post.remove();  // from DOM
+                    post.style.display = 'none';
+                    // post.remove();  // from DOM
                     return;
                 }
             }
@@ -33,8 +33,8 @@
             // Deal with those text appended right after title
             if (keywords.some(keyword => postContent.includes(keyword.toLowerCase()))) {
                 // hide the unwanted feed
-                // post.style.display = 'none';
-                post.remove();
+                post.style.display = 'none';
+                // post.remove();
                 return;
             }
 
@@ -44,8 +44,8 @@
                 const svg_text = document.querySelector(svg_use.href.baseVal);
                 // Spon<tspan>onsored</tspan> is the text that appears in the SVG, FB seems to change how the word is broken up by <tspan> randomly
                 if (svg_text.textContent.includes('Sponsor')) {
-                    // post.style.display = 'none';
-                    post.remove();
+                    post.style.display = 'none';
+                    // post.remove();
                     return;
                 }
             }
