@@ -1,4 +1,13 @@
 (function() {
+    function hidePost(post) {
+        // post.style.display = 'none';
+        // post.style.opacity = 0.1;
+        // post.remove();  // from DOM
+        post.style.position = 'absolute';
+        post.style.left = '-9999px';  // move it off-screen
+        post.style.top = '-9999px';  // move it off-screen
+    }
+
     // filtering
     function filterFeeds() {
         // console.log("filterFeeds");
@@ -18,9 +27,7 @@
                 // 'Shared with Public' -> it seems some friends do share with public... should I care about these?
                 const keywords = ['Verified account'];  // none of my friends have this
                 if (keywords.some(keyword => post_title.textContent.includes(keyword))) {
-                    // post.style.background = '#4fa';
-                    post.style.display = 'none';
-                    // post.remove();  // from DOM
+                    hidePost(post);
                     return;
                 }
             }
@@ -32,9 +39,7 @@
                  "people you may know", "reels"];
             // Deal with those text appended right after title
             if (keywords.some(keyword => postContent.includes(keyword.toLowerCase()))) {
-                // hide the unwanted feed
-                post.style.display = 'none';
-                // post.remove();
+                hidePost(post);
                 return;
             }
 
@@ -44,21 +49,34 @@
                 const svg_text = document.querySelector(svg_use.href.baseVal);
                 // Spon<tspan>onsored</tspan> is the text that appears in the SVG, FB seems to change how the word is broken up by <tspan> randomly
                 if (svg_text.textContent.includes('Sponsor')) {
-                    post.style.display = 'none';
-                    // post.remove();
-                    return;
+                    hidePost(post);
                 }
             }
         });
     }
 
-    // run filterFeeds() initially
-    // filterFeeds();
-    
+    // Debounce timer variable
+    let filterFeedsTimeout = null;
+
+    // Debounced callback for MutationObserver
+    function debouncedFilterFeeds() {
+        if (filterFeedsTimeout) {
+            clearTimeout(filterFeedsTimeout);
+        }
+        filterFeedsTimeout = setTimeout(() => {
+            // Save current scroll position
+            const scrollY = window.scrollY;
+            filterFeeds();
+            // Restore scroll position
+            window.scrollTo(0, scrollY/2);
+            filterFeedsTimeout = null;
+        }, 5000); // 1 second after last change
+    }
+
     // Set up a MutationObserver to monitor changes and re-filter as necessary
-    const observer = new MutationObserver(filterFeeds);
-    observer.observe(document.body, { childList: true, subtree: true });
+    // const observer = new MutationObserver(debouncedFilterFeeds);
+    // observer.observe(document.body, { childList: true, subtree: true });
 
     // run filterFeeds() periodically
-    // setInterval(filterFeeds, 2000);
+    setInterval(filterFeeds, 500);
 })();
