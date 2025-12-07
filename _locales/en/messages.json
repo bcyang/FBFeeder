@@ -1,0 +1,10 @@
+{
+    "extension_name": {
+        "message": "FBFeeder",
+        "description": "Name of the extension"
+    },
+    "extension_description": {
+        "message": "Filter out sponsored posts, ads, and unwanted content from your Facebook feed.",
+        "description": "Description of the extension"
+    }
+}

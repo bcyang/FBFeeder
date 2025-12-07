@@ -1,20 +1,33 @@
-# Facebook Feed Filter Safari Extension
+# FBFeeder
 
-I have lots of friends on FB (well, choice of social network for our era). I don't post but do check feeds to keep up with them.
-
-However, more and more I'm feeling I'm at the mercy of Facebook of how many sponsor content they want to force-feed to me.
-
-Armed the power of GPT, I wonder "how hard could it be to write a safari extension that can help me filter out those I don't want to see?"
-
-Apparently not that difficult.
+A browser extension to help manage your Facebook feed.
 
 ## Installation
-Rather than using XCode to deploy a "packaged" extension, simply
-1. Open Safari, Preference > Advanced, enable "Show features for web developers" at bottom
-2. Now you have Develop menu, Developer > Developer Settings..., enable "Allow unsigned extensions" (maybe optional)
-3. Click on the "Add Temporary Extension" and navigate to the FBFeeder/Resources
-4. Now you can enable it
 
+### Chrome / Edge / Brave
+
+1.  Open your browser and navigate to `chrome://extensions`.
+2.  Enable **Developer mode** in the top right corner.
+3.  Click **Load unpacked**.
+4.  Select the directory containing this repository.
+
+### Safari (macOS)
+
+To use this extension in Safari, you will need to convert it using the standard `xcrun safari-web-extension-converter` tool or load it as an unpacked extension if you have the Safari Web Extension development features enabled.
+
+1.  Open Safari.
+2.  Go to **Develop** > **Allow Unsigned Extensions**.
+3.  Go to **Settings** > **Extensions**.
+4.  Check **FBFeeder**.
+
+*Note: You may need to build a wrapper app for permanent installation in Safari.*
+
+### Firefox
+
+1.  Open Firefox and navigate to `about:debugging`.
+2.  Click **This Firefox**.
+3.  Click **Load Temporary Add-on...**
+4.  Select the `manifest.json` file in this repository.
 
 ## Caveat
 
