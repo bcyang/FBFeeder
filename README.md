@@ -50,6 +50,15 @@ For (2), any post that says "follow" or "join" or "sponsored" is currently treat
 Somehow some "Sponsored" posts start to show up. Upon some investigation, it uses a <svg><use href='#xxxx'> and the implementation is not inline. so the simple innerText approach doesn't work.
 Well, just have to find the definition and inspect that.
 
+#### Flexbox Obfuscation (Dec 2025 finding)
+Facebook found a way to render "Sponsored" as "tSsnnrd" (or a variation of it) by:
+1. Putting characters in a `display: flex` container.
+2. Mixing in decoy characters (hidden with `position: absolute`).
+3. Randomly shuffling the DOM order of the characters.
+4. Using CSS `order: N` style to visually re-arrange them back to "Sponsored".
+
+The fix involves finding `display: flex` spans, filtering out absolute/hidden children, sorting the rest by their computed `order`, and essentially OCR-ing the text back.
+
 ## Installation - XCode (bad)
 1. use XCode to open this project
 2. build it (yes, that's it, it will be available to be selected in Safari)

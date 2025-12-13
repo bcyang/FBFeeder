@@ -2,7 +2,10 @@
     console.log("FBFeeder: Content script loaded.");
     let post_index = 0; // Initialize auto-increment index
     let total_processed_count = 0;
+    let total_hidden_count = 0;
+    let total_shown_count = 0;
     function hidePost(post, reason) {
+        total_hidden_count++;
         console.log(`[hide_post] postid=${post.getAttribute('data-fbfeeder-postid')}, (${reason}): `,
             post.getAttribute('data-fbfeeder-postname'),
             post);
@@ -24,14 +27,13 @@
         // below comes from inspecting the DOM
         posts = document.querySelectorAll('[class="x1lliihq"]:not([data-fbfeeder-processed="true"])');
         var batch_count = 0;
-        var hidden_count = 0;
         var undecided_count = 0;
+        var hidden_count = 0;
         var shown_count = 0;
 
         // this is where we loop through each feed and identify if it's sponsored content
         posts.forEach(post => {
             batch_count++;
-            total_processed_count++;
 
             // const post_name_element = post.querySelector('h4 a[role="link"] b');
             // const post_name = post_name_element ? post_name_element.textContent : "Unknown";
@@ -49,6 +51,7 @@
             post.setAttribute('data-fbfeeder-processed', 'true');
             post.setAttribute('data-fbfeeder-postid', post_index++);
             post.setAttribute('data-fbfeeder-postname', post_name);
+            total_processed_count++;
 
             // Verified account appears in a <title> tag
             const post_title = post.querySelector('title');
@@ -99,11 +102,42 @@
                     // Ignore errors if SVG ref is missing
                 }
             }
-            console.log(`[shown] postid=${post.getAttribute('data-fbfeeder-postid')}`, post_name, post);
+
+            // 5. Flexbox Order De-obfuscation (New Strategy)
+            // Facebook obfuscates text by shuffling <span> elements using CSS 'order' flex property.
+            // We reconstruct the text by sorting visible elements by their computed order.
+            const flexSpans = post.querySelectorAll('span[style*="display: flex"], span[style*="display:flex"]');
+            for (const span of flexSpans) {
+                const children = Array.from(span.children);
+                const validChildren = [];
+
+                for (const child of children) {
+                    const style = window.getComputedStyle(child);
+                    if (style.position === 'absolute' || style.display === 'none') {
+                        continue; // Skip hidden/decoy characters
+                    }
+                    validChildren.push({
+                        text: child.textContent,
+                        order: parseInt(style.order) || 0
+                    });
+                }
+
+                // Sort by flex order
+                validChildren.sort((a, b) => a.order - b.order);
+                const reconstructedText = validChildren.map(c => c.text).join('');
+                // console.log(`[flexbox] postid=${post.getAttribute('data-fbfeeder-postid')}`, post_name, post, reconstructedText);
+
+                if (reconstructedText.toLowerCase().includes('sponsored')) {
+                    hidePost(post, `Flexbox De-obfuscated: "${reconstructedText}"`);
+                    hidden_count++;
+                    return;
+                }
+            }
             shown_count++;
+            total_shown_count++;
         });
-        if (hidden_count + shown_count > 0) {
-            console.log(`[processed] processed ${total_processed_count}, hidden=${hidden_count}, shown ${shown_count}, pending=${undecided_count}`);
+        if ((hidden_count + shown_count) > 0) {
+            console.log(`[processed] accumulated total=${total_processed_count}, hidden=${total_hidden_count}, shown=${total_shown_count}`);
         }
     }
 
