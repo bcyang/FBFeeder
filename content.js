@@ -4,6 +4,7 @@
     let total_processed_count = 0;
     let total_hidden_count = 0;
     let total_shown_count = 0;
+    let current_not_ready_count = 0;
     function hidePost(post, reason) {
         total_hidden_count++;
         console.log(`[hide_post] postid=${post.getAttribute('data-fbfeeder-postid')}, (${reason}): `
@@ -28,28 +29,49 @@
         // below comes from inspecting the DOM
         posts = document.querySelectorAll('[class="x1lliihq"]:not([data-fbfeeder-processed="true"])');
         var n_processed = 0;
-        var n_not_ready = 0;
         var n_hidden = 0;
         var n_shown = 0;
+        current_not_ready_count = 0;
 
         // this is where we loop through each feed and identify if it's sponsored content
         posts.forEach(post => {
             n_processed++;
 
+            let post_name = "Unknown";
+            let post_by_fb = false;
             const post_name_element = post.querySelector('h4');
-            if (!post_name_element) {
-                // element not ready yet (?), skip this round
-                n_not_ready++;
-                return;
+            if (post_name_element) {
+                post_name = post_name_element.textContent;
+            } else {
+                // Fallback for posts without h4 (e.g. Reels?)
+                const css_img = post.querySelector('i[data-visualcompletion="css-img"]');
+                if (css_img) {
+                    post_name = css_img.parentElement ? css_img.parentElement.textContent : "Unknown";
+                    // If identified as "Reel" or "People you may know", hide it immediately
+                    if (["Reel", "People you may know"].some(k => post_name.includes(k))) {
+                        post_by_fb = true;
+                    }
+                } else {
+                    // element not ready yet (?), skip this round
+                    current_not_ready_count++;
+                    return;
+                }
             }
 
+
             // we'll handle this post, annotate it with post id/name
-            const post_name = post_name_element ? post_name_element.textContent : "Unknown";
+
             // Mark as processed
             post.setAttribute('data-fbfeeder-processed', 'true');
             post.setAttribute('data-fbfeeder-postid', post_index++);
             post.setAttribute('data-fbfeeder-postname', post_name);
             total_processed_count++;
+
+            if (post_by_fb) {
+                hidePost(post, "FB Injected");
+                n_hidden++;
+                return;
+            }
 
             // Verified account appears in a <title> tag
             const post_title = post.querySelector('title');
@@ -124,14 +146,16 @@
 
             // Last Resort - Text-based filtering
             // Use textContent for better reliability than innerText
+            // NOTE: only add keywords when all options are exhausted
             const postContent = (post.textContent || post.innerText).toLowerCase();
-            const keywords = ["sponsored", "people you may know", "reels"];
-
-            const foundKeyword = keywords.find(keyword => postContent.includes(keyword.toLowerCase()));
-            if (foundKeyword) {
-                hidePost(post, `Keyword: ${foundKeyword}`);
-                n_hidden++;
-                return;
+            const keywords = [];
+            if (keywords.length > 0) {
+                const foundKeyword = keywords.find(keyword => postContent.includes(keyword.toLowerCase()));
+                if (foundKeyword) {
+                    hidePost(post, `Keyword: ${foundKeyword}`);
+                    n_hidden++;
+                    return;
+                }
             }
 
             console.log(`[shown] postid=${post.getAttribute('data-fbfeeder-postid')}`,
@@ -140,9 +164,9 @@
             n_shown++;
             total_shown_count++;
         });
-        if ((n_hidden + n_shown + n_not_ready) > 0) {
+        if ((n_hidden + n_shown) > 0) {
             // for each invocation, log if we've done any processing
-            console.log(`[processed] accumulated total=${total_processed_count}, hidden=${total_hidden_count}, shown=${total_shown_count}, n_not_ready=${n_not_ready}`);
+            console.log(`[processed] accumulated total=${total_processed_count}, hidden=${total_hidden_count}, shown=${total_shown_count}, n_not_ready=${current_not_ready_count}`);
         }
     }
 
