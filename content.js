@@ -6,9 +6,10 @@
     let total_shown_count = 0;
     function hidePost(post, reason) {
         total_hidden_count++;
-        console.log(`[hide_post] postid=${post.getAttribute('data-fbfeeder-postid')}, (${reason}): `,
-            post.getAttribute('data-fbfeeder-postname'),
-            post);
+        console.log(`[hide_post] postid=${post.getAttribute('data-fbfeeder-postid')}, (${reason}): `
+            , post.getAttribute('data-fbfeeder-postname')
+            // , post 
+        );
 
         // post.style.display = 'none';
         // post.style.opacity = 0.1;
@@ -26,22 +27,19 @@
         // uses layers and layers of divs, making identify the outer-most div harder to identify
         // below comes from inspecting the DOM
         posts = document.querySelectorAll('[class="x1lliihq"]:not([data-fbfeeder-processed="true"])');
-        var batch_count = 0;
-        var undecided_count = 0;
-        var hidden_count = 0;
-        var shown_count = 0;
+        var n_processed = 0;
+        var n_not_ready = 0;
+        var n_hidden = 0;
+        var n_shown = 0;
 
         // this is where we loop through each feed and identify if it's sponsored content
         posts.forEach(post => {
-            batch_count++;
+            n_processed++;
 
-            // const post_name_element = post.querySelector('h4 a[role="link"] b');
-            // const post_name = post_name_element ? post_name_element.textContent : "Unknown";
-            // simpler?
             const post_name_element = post.querySelector('h4');
             if (!post_name_element) {
                 // element not ready yet (?), skip this round
-                undecided_count++;
+                n_not_ready++;
                 return;
             }
 
@@ -60,42 +58,32 @@
                 const keywords = ['Verified account'];  // none of my friends have this
                 if (keywords.some(keyword => post_title.textContent.includes(keyword))) {
                     hidePost(post, "Verified account in Title");
-                    hidden_count++;
+                    n_hidden++;
                     return;
                 }
             }
 
-            // 2. Check for "Sponsored" specific URL parameters
-            // "attributionsrc" was too broad. Ads (even with obfuscated text) often have 
-            // tracking parameters like __cft__ (Campaign Feedback Token) or __tn__ in the link hrefs.
-            const adLinks = Array.from(post.querySelectorAll('a')).filter(a => {
-                return (a.href.includes('__cft__') || a.href.includes('__tn__'));
-            });
 
-            // if (adLinks.length > 0) {
-            //     hidePost(post, "Link with Ad Tracking Token (__cft__/__tn__)");
-            //     return;
-            // }
-
-            // 3. Text-based filtering (Fallback)
-            // Use textContent for better reliability than innerText
-            const postContent = (post.textContent || post.innerText).toLowerCase();
-            const keywords = ["sponsored", "follow", "join", "people you may know", "reels"];
-
-            const foundKeyword = keywords.find(keyword => postContent.includes(keyword.toLowerCase()));
-            if (foundKeyword) {
-                hidePost(post, `Keyword: ${foundKeyword}`);
-                hidden_count++;
-                return;
+            // Check for "Follow" or "Join" button
+            // <div role="button">...<span>Follow</span>...</div>
+            // This is more specific than a global keyword search for "Follow"
+            const buttons = post.querySelectorAll('div[role="button"]');
+            for (const button of buttons) {
+                if (button.textContent.includes("Follow") || button.textContent.includes("Join")) {
+                    hidePost(post, 'Has "Follow"/"Join" button');
+                    n_hidden++;
+                    return;
+                }
             }
 
-            // 4. SVG/Use based filtering (Legacy/Obfuscated "Sponsored" text)
+            // Sponsored - <svg><use href='#xxxx'>
+            // SVG/Use based filtering (Legacy/Obfuscated "Sponsored" text)
             for (const svg_use of post.querySelectorAll('use')) {
                 try {
                     const svg_text = document.querySelector(svg_use.href.baseVal);
                     if (svg_text && svg_text.textContent.includes('Sponsor')) {
                         hidePost(post, "Obfuscated SVG 'Sponsored'");
-                        hidden_count++;
+                        n_hidden++;
                         return;
                     }
                 } catch (e) {
@@ -103,7 +91,7 @@
                 }
             }
 
-            // 5. Flexbox Order De-obfuscation (New Strategy)
+            // Sponsored - <span style="display: flex">
             // Facebook obfuscates text by shuffling <span> elements using CSS 'order' flex property.
             // We reconstruct the text by sorting visible elements by their computed order.
             const flexSpans = post.querySelectorAll('span[style*="display: flex"], span[style*="display:flex"]');
@@ -129,15 +117,32 @@
 
                 if (reconstructedText.toLowerCase().includes('sponsored')) {
                     hidePost(post, `Flexbox De-obfuscated: "${reconstructedText}"`);
-                    hidden_count++;
+                    n_hidden++;
                     return;
                 }
             }
-            shown_count++;
+
+            // Last Resort - Text-based filtering
+            // Use textContent for better reliability than innerText
+            const postContent = (post.textContent || post.innerText).toLowerCase();
+            const keywords = ["sponsored", "people you may know", "reels"];
+
+            const foundKeyword = keywords.find(keyword => postContent.includes(keyword.toLowerCase()));
+            if (foundKeyword) {
+                hidePost(post, `Keyword: ${foundKeyword}`);
+                n_hidden++;
+                return;
+            }
+
+            console.log(`[shown] postid=${post.getAttribute('data-fbfeeder-postid')}`,
+                post.getAttribute('data-fbfeeder-postname'));
+
+            n_shown++;
             total_shown_count++;
         });
-        if ((hidden_count + shown_count) > 0) {
-            console.log(`[processed] accumulated total=${total_processed_count}, hidden=${total_hidden_count}, shown=${total_shown_count}`);
+        if ((n_hidden + n_shown + n_not_ready) > 0) {
+            // for each invocation, log if we've done any processing
+            console.log(`[processed] accumulated total=${total_processed_count}, hidden=${total_hidden_count}, shown=${total_shown_count}, n_not_ready=${n_not_ready}`);
         }
     }
 
