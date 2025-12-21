@@ -77,7 +77,7 @@
             const post_title = post.querySelector('title');
             if (post_title) {
                 // 'Shared with Public' -> it seems some friends do share with public... should I care about these?
-                const keywords = ['Verified account'];  // none of my friends have this
+                const keywords = ['Verified account', "已驗證帳號"];  // none of my friends have this
                 if (keywords.some(keyword => post_title.textContent.includes(keyword))) {
                     hidePost(post, "Verified account in Title");
                     n_hidden++;
@@ -86,13 +86,15 @@
             }
 
 
-            // Check for "Follow" or "Join" button
+            // Check for buttons with specific keywords
             // <div role="button">...<span>Follow</span>...</div>
-            // This is more specific than a global keyword search for "Follow"
+            // This is more specific than a global keyword search
+            const buttonKeywords = ["Follow", "Join", "Sponsored", "贊助"];
             const buttons = post.querySelectorAll('div[role="button"]');
             for (const button of buttons) {
-                if (button.textContent.includes("Follow") || button.textContent.includes("Join")) {
-                    hidePost(post, 'Has "Follow"/"Join" button');
+                const foundKeyword = buttonKeywords.find(keyword => button.textContent.includes(keyword));
+                if (foundKeyword) {
+                    hidePost(post, `Has Button with keyword: "${foundKeyword}"`);
                     n_hidden++;
                     return;
                 }
@@ -137,7 +139,9 @@
                 const reconstructedText = validChildren.map(c => c.text).join('');
                 // console.log(`[flexbox] postid=${post.getAttribute('data-fbfeeder-postid')}`, post_name, post, reconstructedText);
 
-                if (reconstructedText.toLowerCase().includes('sponsored')) {
+                // Check for "Sponsored" or "贊助"
+                const flexKeywords = ['sponsored', '贊助'];
+                if (flexKeywords.some(keyword => reconstructedText.toLowerCase().includes(keyword))) {
                     hidePost(post, `Flexbox De-obfuscated: "${reconstructedText}"`);
                     n_hidden++;
                     return;
