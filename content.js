@@ -89,7 +89,7 @@
             // Check for buttons with specific keywords
             // <div role="button">...<span>Follow</span>...</div>
             // This is more specific than a global keyword search
-            const buttonKeywords = ["Follow", "Join", "Sponsored", "贊助"];
+            const buttonKeywords = ["Follow", "Join", "Sponsored", "贊助", "追蹤", "加入"];
             const buttons = post.querySelectorAll('div[role="button"]');
             for (const button of buttons) {
                 const foundKeyword = buttonKeywords.find(keyword => button.textContent.includes(keyword));
