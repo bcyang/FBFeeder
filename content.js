@@ -1,5 +1,32 @@
 (function () {
     console.log("FBFeeder: Content script loaded.");
+
+    const I18N_CONFIG = {
+        en: {
+            sponsored: ["Sponsored", "Sponsor"],
+            verified: ["Verified account"],
+            buttons: ["Follow", "Join", "Sponsored"],
+            reels: ["Reel", "People you may know"]
+        },
+        zh: { // Traditional Chinese
+            sponsored: ["贊助"],
+            verified: ["已驗證帳號"],
+            buttons: ["贊助", "追蹤", "加入"],
+            reels: []
+        }
+    };
+
+    const I18n = {
+        getAll: function (category) {
+            let keywords = [];
+            for (const lang in I18N_CONFIG) {
+                if (I18N_CONFIG[lang][category]) {
+                    keywords = keywords.concat(I18N_CONFIG[lang][category]);
+                }
+            }
+            return keywords;
+        }
+    };
     let post_index = 0; // Initialize auto-increment index
     let total_processed_count = 0;
     let total_hidden_count = 0;
@@ -48,7 +75,7 @@
                 if (css_img) {
                     post_name = css_img.parentElement ? css_img.parentElement.textContent : "Unknown";
                     // If identified as "Reel" or "People you may know", hide it immediately
-                    if (["Reel", "People you may know"].some(k => post_name.includes(k))) {
+                    if (I18n.getAll('reels').some(k => post_name.includes(k))) {
                         post_by_fb = true;
                     }
                 } else {
@@ -77,7 +104,8 @@
             const post_title = post.querySelector('title');
             if (post_title) {
                 // 'Shared with Public' -> it seems some friends do share with public... should I care about these?
-                const keywords = ['Verified account', "已驗證帳號"];  // none of my friends have this
+                // 'Shared with Public' -> it seems some friends do share with public... should I care about these?
+                const keywords = I18n.getAll('verified');
                 if (keywords.some(keyword => post_title.textContent.includes(keyword))) {
                     hidePost(post, "Verified account in Title");
                     n_hidden++;
@@ -89,7 +117,7 @@
             // Check for buttons with specific keywords
             // <div role="button">...<span>Follow</span>...</div>
             // This is more specific than a global keyword search
-            const buttonKeywords = ["Follow", "Join", "Sponsored", "贊助", "追蹤", "加入"];
+            const buttonKeywords = I18n.getAll('buttons');
             const buttons = post.querySelectorAll('div[role="button"]');
             for (const button of buttons) {
                 const foundKeyword = buttonKeywords.find(keyword => button.textContent.includes(keyword));
@@ -110,16 +138,19 @@
                     let depth = 0;
                     const MAX_DEPTH = 5;
 
-                    while (target && target.tagName.toLowerCase() === 'use' && depth < MAX_DEPTH) {
-                        if (target.href && target.href.baseVal) {
-                            target = document.querySelector(target.href.baseVal);
+                    while (target && depth < MAX_DEPTH) {
+                        // Check if target is a <use> element or contains one
+                        let useElement = target.tagName.toLowerCase() === 'use' ? target : target.querySelector('use');
+
+                        if (useElement && useElement.href && useElement.href.baseVal) {
+                            target = document.querySelector(useElement.href.baseVal);
                             depth++;
                         } else {
                             break;
                         }
                     }
 
-                    if (target && (target.textContent.includes('Sponsor') || target.textContent.includes('贊助'))) {
+                    if (target && I18n.getAll('sponsored').some(keyword => target.textContent.includes(keyword))) {
                         hidePost(post, "Obfuscated SVG 'Sponsored'");
                         n_hidden++;
                         return;
@@ -154,8 +185,8 @@
                 // console.log(`[flexbox] postid=${post.getAttribute('data-fbfeeder-postid')}`, post_name, post, reconstructedText);
 
                 // Check for "Sponsored" or "贊助"
-                const flexKeywords = ['sponsored', '贊助'];
-                if (flexKeywords.some(keyword => reconstructedText.toLowerCase().includes(keyword))) {
+                const flexKeywords = I18n.getAll('sponsored');
+                if (flexKeywords.some(keyword => reconstructedText.toLowerCase().includes(keyword.toLowerCase()))) {
                     hidePost(post, `Flexbox De-obfuscated: "${reconstructedText}"`);
                     n_hidden++;
                     return;
