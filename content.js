@@ -103,9 +103,23 @@
             // Sponsored - <svg><use href='#xxxx'>
             // SVG/Use based filtering (Legacy/Obfuscated "Sponsored" text)
             for (const svg_use of post.querySelectorAll('use')) {
+                // FB obfuscates the text by using SVG <use> elements with href attributes pointing to other SVG elements.
+                // We need to follow the chain of <use> elements to find the actual text.
                 try {
-                    const svg_text = document.querySelector(svg_use.href.baseVal);
-                    if (svg_text && svg_text.textContent.includes('Sponsor')) {
+                    let target = document.querySelector(svg_use.href.baseVal);
+                    let depth = 0;
+                    const MAX_DEPTH = 5;
+
+                    while (target && target.tagName.toLowerCase() === 'use' && depth < MAX_DEPTH) {
+                        if (target.href && target.href.baseVal) {
+                            target = document.querySelector(target.href.baseVal);
+                            depth++;
+                        } else {
+                            break;
+                        }
+                    }
+
+                    if (target && (target.textContent.includes('Sponsor') || target.textContent.includes('贊助'))) {
                         hidePost(post, "Obfuscated SVG 'Sponsored'");
                         n_hidden++;
                         return;
