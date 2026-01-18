@@ -29,26 +29,26 @@ To use this extension in Safari, you will need to convert it using the standard 
 3.  Click **Load Temporary Add-on...**
 4.  Select the `manifest.json` file in this repository.
 
-## Caveat
-
-It works currently and will likely work until FB release another version of UI (that generates another random css style).
-The keyword filter I use are too simplistic.
-
-Well, I don't use FB enough to warrant more effort on this. 
 
 ## Development History
 
-#### Feed identification
+### Initial thoughts
 From the structure of the page, the initial plan is simple
 1. find the "div" that holds each post
 2. decide if it's an Ad.
 
-For (1), FB doesn't make it easy (either intentionally to evade ad-blocker or unintentionally because of the tool choices), but we found one (unlikely to work forever).
-For (2), any post that says "follow" or "join" or "sponsored" is currently treated as Ad -> I figured if any of my friend uses this, so be it. It's unlikely I'll miss it.
+While the initial implementation is more heuristic, it kind of works by false-positively identifying some posts as Ad (so be it, FB post is not essential).
 
-#### dealing with "Sponsored"
-Somehow some "Sponsored" posts start to show up. Upon some investigation, it uses a <svg><use href='#xxxx'> and the implementation is not inline. so the simple innerText approach doesn't work.
-Well, just have to find the definition and inspect that.
+Time goes on and it became a game and I kind of want to know what's going on.
+
+### Obfuscation
+
+When rendered, it's easy for us to see Sponsored, Follow, Join, etc. However, they're not presented in the DOM as-is. FB does go to some lengths to make it hard.
+
+A few interesting techniques:
+
+#### SVG Obfuscation
+<svg><use href='#xxxx'> is used and the implementation is not inline. so the simple innerText approach doesn't work.
 
 #### Flexbox Obfuscation (Dec 2025 finding)
 Facebook found a way to render "Sponsored" as "tSsnnrd" (or a variation of it) by:
@@ -59,12 +59,8 @@ Facebook found a way to render "Sponsored" as "tSsnnrd" (or a variation of it) b
 
 The fix involves finding `display: flex` spans, filtering out absolute/hidden children, sorting the rest by their computed `order`, and essentially OCR-ing the text back.
 
-## Installation - XCode (bad)
-1. use XCode to open this project
-2. build it (yes, that's it, it will be available to be selected in Safari)
-3. Open Safari, Preference > Advanced, enable "Show features for web developers" at bottom
-4. Now you have Develop menu, Developer > Developer Settings..., enable "Allow unsigned extensions"
-5. now you should have an icon appear next to the Address Bar
+## Notes
 
-## Credit
-Not sure if it should go to GPT or wherever GPT scrap this from.
+Well, the codes are there for you to see and modify. Exactly the way I want to load any extension to my browser.
+
+It works currently and will likely continue to work (the skeleton of the code remain the same since May 2025) until FB release another major version of UI.
