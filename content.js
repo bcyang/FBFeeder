@@ -34,7 +34,7 @@
     let current_not_ready_count = 0;
     function hidePost(post, reason) {
         total_hidden_count++;
-        console.log(`[hide_post] postid=${post.getAttribute('data-fbfeeder-postid')}, (${reason}): `
+        console.log(`[hide] postid=${post.getAttribute('data-fbfeeder-postid')}, (${reason}): `
             , post.getAttribute('data-fbfeeder-postname')
             // , post 
         );
@@ -86,12 +86,19 @@
             }
 
 
-            // we'll handle this post, annotate it with post id/name
+            // we'll handle this, annotate it with post id/name so we don't process it again next around
 
             // Mark as processed
             post.setAttribute('data-fbfeeder-processed', 'true');
             post.setAttribute('data-fbfeeder-postid', post_index++);
             post.setAttribute('data-fbfeeder-postname', post_name);
+
+            // we always see [class="x1lliihq"] nested inside each other. Only need to handle the outer one
+            if (!post.querySelector('div[class="x1lliihq"]')) {
+                return;
+            }
+
+            // legit div/post identified
             total_processed_count++;
 
             if (post_by_fb) {
@@ -113,6 +120,17 @@
                 }
             }
 
+            // Check for simple span.html-span with keywords
+            const spanKeywords = I18n.getAll('buttons');
+            const spans = post.querySelectorAll('span.html-span');
+            for (const span of spans) {
+                const foundKeyword = spanKeywords.find(keyword => span.textContent.includes(keyword));
+                if (foundKeyword) {
+                    hidePost(post, `Has simple span with keyword: "${foundKeyword}"`);
+                    n_hidden++;
+                    return;
+                }
+            }
 
             // Check for buttons with specific keywords
             // <div role="button">...<span>Follow</span>...</div>
