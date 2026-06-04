@@ -5,14 +5,14 @@
         en: {
             sponsored: ["Sponsored", "Sponsor"],
             verified: ["Verified account"],
-            buttons: ["Follow", "Join", "Sponsored"],
+            buttons: ["Follow", "Join", "Sponsored", "Recommended"], // TODO unsure about Recommended yet
             reels: ["Reel", "People you may know"]
         },
         zh: { // Traditional Chinese
             sponsored: ["贊助"],
             verified: ["已驗證帳號"],
-            buttons: ["贊助", "追蹤", "加入"],
-            reels: []
+            buttons: ["贊助", "追蹤", "加入", "為你推薦"],
+            reels: ["Reel", "你可能認識的"]
         }
     };
 
