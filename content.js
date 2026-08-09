@@ -200,12 +200,15 @@
                 // Sort by flex order
                 validChildren.sort((a, b) => a.order - b.order);
                 const reconstructedText = validChildren.map(c => c.text).join('');
-                // console.log(`[flexbox] postid=${post.getAttribute('data-fbfeeder-postid')}`, post_name, post, reconstructedText);
+                
+                // Strip invisible zero-width characters (e.g., U+034F Combining Grapheme Joiner)
+                const sanitizedText = reconstructedText.replace(/[\u00AD\u200B-\u200D\u2060\uFEFF\u034F]/g, '');
+                // console.log(`[flexbox] postid=${post.getAttribute('data-fbfeeder-postid')}`, post_name, post, sanitizedText);
 
                 // Check for "Sponsored" or "贊助"
                 const flexKeywords = I18n.getAll('sponsored');
-                if (flexKeywords.some(keyword => reconstructedText.toLowerCase().includes(keyword.toLowerCase()))) {
-                    hidePost(post, `Flexbox De-obfuscated: "${reconstructedText}"`);
+                if (flexKeywords.some(keyword => sanitizedText.toLowerCase().includes(keyword.toLowerCase()))) {
+                    hidePost(post, `Flexbox De-obfuscated: "${sanitizedText}"`);
                     n_hidden++;
                     return;
                 }
