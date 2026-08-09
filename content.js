@@ -66,23 +66,26 @@
 
             let post_name = "Unknown";
             let post_by_fb = false;
-            const post_name_element = post.querySelector('h4');
+            
+            // Facebook uses h4, h3, or sometimes css-img to indicate title/author
+            const post_name_element = post.querySelector('h4, h3');
             if (post_name_element) {
                 post_name = post_name_element.textContent;
             } else {
-                // Fallback for posts without h4 (e.g. Reels?)
+                // Fallback for posts without h4/h3
                 const css_img = post.querySelector('i[data-visualcompletion="css-img"]');
                 if (css_img) {
                     post_name = css_img.parentElement ? css_img.parentElement.textContent : "Unknown";
-                    // If identified as "Reel" or "People you may know", hide it immediately
-                    if (I18n.getAll('reels').some(k => post_name.includes(k))) {
-                        post_by_fb = true;
-                    }
                 } else {
                     // element not ready yet (?), skip this round
                     current_not_ready_count++;
                     return;
                 }
+            }
+
+            // If identified as "Reel" or "People you may know", hide it immediately
+            if (I18n.getAll('reels').some(k => post_name.includes(k))) {
+                post_by_fb = true;
             }
 
 
